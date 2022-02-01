@@ -1,5 +1,5 @@
 [package]
-name = "PDP"
+name = "pdp"
 version = "0.1.0"
 edition = "2021"
 
