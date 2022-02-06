@@ -1,11 +1,11 @@
 use std::env;
-mod read;
+mod utils;
 
 fn main() {
 
     let args: Vec<String> = env::args().collect();
     let filename = args[1].clone();
-    let p = read::run(filename);
+    let p = utils::read::run(filename);
 
     println!("{:?}", p)
 }
