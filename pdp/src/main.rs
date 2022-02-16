@@ -7,5 +7,5 @@ fn main() {
     let filename = args[1].clone();
     let p = utils::read::run(filename);
 
-    println!("{:?}", p)
+    //println!("{:?}", p)
 }

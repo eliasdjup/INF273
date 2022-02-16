@@ -74,20 +74,47 @@ pub fn run(filename: String) -> Result<pdp::Problem, Box<dyn Error>> {
         travel_cost[d[j][0] as usize][d[j][1] as usize][(d[j][2]) as usize] = d[j][4];
     }
 
-    /*
-    VesselCapacity = np.zeros(num_vehicles)
-    StartingTime = np.zeros(num_vehicles)
-    FirstTravelTime = np.zeros((num_vehicles, num_nodes))
-    FirstTravelCost = np.zeros((num_vehicles, num_nodes))
-    A = np.array(A, dtype=np.int)
-    for i in range(num_vehicles):
-        VesselCapacity[i] = A[i, 3]
-        StartingTime[i] = A[i, 2]
-        for j in range(num_nodes):
-            FirstTravelTime[i, j] = TravelTime[i + 1, A[i, 1], j + 1] + A[i, 2]
-            FirstTravelCost[i, j] = TravelCost[i + 1, A[i, 1], j + 1]
 
+    let mut vessel_capacity = vec![];
+    let mut starting_time = vec![];
+    let mut first_travel_time = vec![vec![0; (n_nodes) as usize]; (n_veichles) as usize];
+    let mut first_travel_cost = vec![vec![0; (n_nodes) as usize]; (n_veichles) as usize];
+
+
+    for i in 0..n_veichles {
+        vessel_capacity.push(a[i as usize][3]);
+        starting_time.push(a[i as usize][2]);
+        for j in 0..n_nodes {
+            first_travel_time[i as usize][j as usize] = (travel_time[(i+1) as usize][a[i as usize][1] as usize][(j+1) as usize]) + (a[i as usize][2]);
+            first_travel_cost[i as usize][j as usize] = travel_cost[(i+1) as usize][a[i as usize][1] as usize][(j+1) as usize];
+        }
+    }
+    
+    let travel_time_ret = slice(travel_time);
+    let travel_cost_ret = slice(travel_cost);
+
+
+
+    /*
+    TravelTime = TravelTime[1:, 1:, 1:]
+    TravelCost = TravelCost[1:, 1:, 1:]
+    VesselCargo = np.zeros((num_vehicles, num_calls + 1))
+    B = np.array(B, dtype=object)
+    for i in range(num_vehicles):
+        VesselCargo[i, np.array(B[i][1:], dtype=np.int)] = 1
+    VesselCargo = VesselCargo[:, 1:]
+
+    LoadingTime = np.zeros((num_vehicles + 1, num_calls + 1))
+    UnloadingTime = np.zeros((num_vehicles + 1, num_calls + 1))
+    PortCost = np.zeros((num_vehicles + 1, num_calls + 1))
+    E = np.array(E, dtype=np.int)
+    for i in range(num_vehicles * num_calls):
+        LoadingTime[E[i, 0], E[i, 1]] = E[i, 2]
+        UnloadingTime[E[i, 0], E[i, 1]] = E[i, 4]
+        PortCost[E[i, 0], E[i, 1]] = E[i, 5] + E[i, 3]
             */
+    
+
 
     let p = pdp::Problem::construct(n_nodes, n_veichles, n_calls);
 
@@ -113,4 +140,23 @@ fn parse_float(inp: &std::string::String) -> f32 {
         ret.insert(1, '.');
         return ret.parse::<f32>().unwrap();
     }
+}
+
+fn slice(inp: std::vec::Vec<std::vec::Vec<std::vec::Vec<i32>>>) -> std::vec::Vec<std::vec::Vec<std::vec::Vec<i32>>> {
+
+    let mut ret = vec![];
+
+    for x in &inp[1..] {
+        let mut x_l = vec![];
+        for y in &x[1..] {
+            let mut y_l = vec![];
+            for z in &y[1..] {
+                y_l.push(z.clone());
+            }
+            x_l.push(y_l);
+        }
+        ret.push(x_l);
+    }
+
+    return ret;
 }
