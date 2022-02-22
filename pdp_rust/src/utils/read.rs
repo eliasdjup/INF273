@@ -89,11 +89,17 @@ pub fn run(filename: String) -> Result<pdp::Problem, Box<dyn Error>> {
             first_travel_cost[i as usize][j as usize] = travel_cost[(i+1) as usize][a[i as usize][1] as usize][(j+1) as usize];
         }
     }
-    
+
     let travel_time_ret = slice(travel_time);
     let travel_cost_ret = slice(travel_cost);
 
+    let mut vessel_cargo = vec![];
 
+    for i in 0..n_veichles {
+        let temp = &b[i as usize][1..];
+
+        vessel_cargo[i as usize][b[i as usize][1..]]
+    }
 
     /*
     TravelTime = TravelTime[1:, 1:, 1:]
