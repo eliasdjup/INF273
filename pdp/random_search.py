@@ -2,13 +2,12 @@ import glob
 import os
 from math import ceil
 from statistics import mean
-from utils import *
 from random import randrange, shuffle
 import time
-
+import utils
 
 def random_search(s_0, prob, n_iterations=10000):
-    best_s = [s_0, cost_function(s_0, prob)]
+    best_s = [s_0, utils.cost_function(s_0, prob)]
 
     for i in range(1, n_iterations + 1):
         curr_sol = generate_random_sol(prob)
@@ -52,9 +51,9 @@ def main():
     # os.chdir(r"/home/elias/Projects/INF273/pdp_py/data")
     # problems = glob.glob("*.txt")
     problems = [
-        "./data/Call_7_Vehicle_3.txt",
-        "./data/Call_18_Vehicle_5.txt",
-        "./data/Call_35_Vehicle_7.txt",
+        "./data/Call_80_Vehicle_20.txt",
+        "./data/Call_130_Vehicle_40.txt",
+        "./data/Call_300_Vehicle_90.txt",
     ]
     print("---------------Random Search---------------")
     for file in problems:
@@ -83,6 +82,7 @@ def main():
         improvement = 100 * (cost_s0 - best[1]) / best[1]
 
         print("Avg objective: ", avg_obj)
+        print("Best solution: ", best[0])
         print("Best objective: ", best[1])
         print("Improvement : ", improvement, "%")
         print("Running time : ", best[2])
