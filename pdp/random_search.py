@@ -1,18 +1,17 @@
-import glob
-import os
 from math import ceil
 from statistics import mean
 from random import randrange, shuffle
 import time
 import utils
 
+
 def random_search(s_0, prob, n_iterations=10000):
     best_s = [s_0, utils.cost_function(s_0, prob)]
 
     for i in range(1, n_iterations + 1):
         curr_sol = generate_random_sol(prob)
-        curr_feasiblity, c = feasibility_check(curr_sol, prob)
-        curr_cost = cost_function(curr_sol, prob)
+        curr_feasiblity, c = utils.feasibility_check(curr_sol, prob)
+        curr_cost = utils.cost_function(curr_sol, prob)
         if curr_feasiblity and curr_cost < best_s[1]:
             best_s = [curr_sol, curr_cost]
     return best_s
@@ -60,10 +59,10 @@ def main():
         print("-------------------------------------------")
         print("Problem: ", file)
 
-        prob = load_problem(file)
+        prob = utils.load_problem(file)
 
-        s_0 = generate_s_0(prob["n_vehicles"], prob["n_calls"])
-        cost_s0 = cost_function(s_0, prob)
+        s_0 = utils.generate_s_0(prob["n_vehicles"], prob["n_calls"])
+        cost_s0 = utils.cost_function(s_0, prob)
 
         runs = []
 
