@@ -23,25 +23,18 @@ def local_search(s_0, prob, operator):
 
     for i in range(1, 10001):
         bar.update(i)
-        # print("----------------------------------------")
         current = operator(best_s, prob)
-        # print(current)
         curr_feasiblity, c = feasibility_check(current, prob)
-        curr_cost = cost_function(current, prob)
+        if curr_feasiblity:
+            curr_cost = cost_function(current, prob)
+            if curr_cost < best_s[1]:
+                best_s = [current, curr_cost]
 
-        # print(curr_feasiblity, curr_cost)
-
-        if curr_feasiblity and curr_cost < best_s[1]:
-            best_s = [current, curr_cost]
-        # time.sleep(0.5)
     bar.finish()
     return best_s
 
 
 def main():
-    # os.chdir(r"/home/elias/Projects/INF273/pdp/data")
-    # problems = glob.glob("*.txt")
-    # problems = ["./data/Call_7_Vehicle_3.txt"]
     problems = [
         "./data/Call_7_Vehicle_3.txt",
         "./data/Call_18_Vehicle_5.txt",
