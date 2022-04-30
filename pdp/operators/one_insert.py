@@ -1,6 +1,6 @@
 import random
 
-from operators.utils import get_calls, rand_from_call, shuffle_call
+from pdp.operators.utils import get_calls, rand_from_call, shuffle_call
 
 
 def one_insert(solution, prob):

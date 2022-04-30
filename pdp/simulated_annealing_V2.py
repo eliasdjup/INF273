@@ -2,16 +2,16 @@ import numpy as np
 import random
 from statistics import mean
 import time
-from operators.one_insert import one_insert
-from operators.two_exchange import two_exchange
-from operators.three_exchange import three_exchange
 import progressbar
 import math
+from pdp.operators.dummy_to_best import dummy_to_best
+from pdp.operators.two_exchange_capacity import two_exhange_capacity
+from pdp.operators.route_shuffle import route_shuffle
 
-from utils import cost_function, feasibility_check, generate_s_0, load_problem
+from pdp.utils import cost_function, feasibility_check, generate_s_0, load_problem
 
 
-def simulated_annealing(s_0, instance, operator):
+def simulated_annealing(s_0, instance, operators):
     best_s = [s_0, cost_function(s_0, instance)]
     incumbent = [s_0, cost_function(s_0, instance)]
     t_f = 0.1
@@ -26,11 +26,11 @@ def simulated_annealing(s_0, instance, operator):
 
     for w in range(1, 101):
         bar.update(w)
+        operator = roulette_wheel(operators)
         new_s = operator(incumbent, instance)
         new_s_feasiblity, c = feasibility_check(new_s, instance)
 
         if new_s_feasiblity:
-            print(new_s)
             new_s_cost = cost_function(new_s, instance)
             delta_e = new_s_cost - incumbent[1]
             if delta_e < 0.8:
@@ -45,12 +45,13 @@ def simulated_annealing(s_0, instance, operator):
 
     delta_avg = 0 if len(delta_w) == 0 else mean(delta_w)
     t_0 = -delta_avg / (np.log(0.8))
-    a = (t_f / t_0) ** (1 / 9900)
+    a = (t_f / t_0) ** (1 / 9900)  # Division by zero error
 
     t = t_0
 
     for i in range(101, 10001):
         bar.update(i)
+        operator = roulette_wheel(operators)
         new_s = operator(incumbent, instance)
         new_s_feasiblity, c = feasibility_check(new_s, instance)
 
@@ -72,18 +73,34 @@ def simulated_annealing(s_0, instance, operator):
     return best_s
 
 
+def roulette_wheel(operators):
+    selection = random.uniform(0, 1)
+
+    p1 = 0.2
+    p2 = 0.4
+    p3 = 0.4
+
+    if selection < p1:
+        return operators[0]
+    elif selection < p1 + p2:
+        return operators[1]
+    else:
+        return operators[2]
+
+
 def main():
-    # os.chdir(r"/home/elias/Projects/INF273/pdp/data")
-    # problems = glob.glob("*.txt")
     # problems = ["./data/Call_7_Vehicle_3.txt"]
     problems = [
-        "./data/Call_7_Vehicle_3.txt",
-        "./data/Call_18_Vehicle_5.txt",
-        "./data/Call_35_Vehicle_7.txt",
-        "./data/Call_80_Vehicle_20.txt",
-        "./data/Call_130_Vehicle_40.txt",
-        "./data/Call_300_Vehicle_90.txt",
+        "./pdp/data/Call_7_Vehicle_3.txt",
+        "./pdp/data/Call_18_Vehicle_5.txt",
+        "./pdp/data/Call_35_Vehicle_7.txt",
+        "./pdp/data/Call_80_Vehicle_20.txt",
+        "./pdp/data/Call_130_Vehicle_40.txt",
+        "./pdp/data/Call_300_Vehicle_90.txt",
     ]
+
+    operators = [two_exhange_capacity, dummy_to_best, route_shuffle]
+
     print("---------------Simulated Annealing---------------")
     for file in problems:
         print("-------------------------------------------")
@@ -99,7 +116,7 @@ def main():
         for iteration in range(1, 11):
             print("Iteration " + str(iteration))
             start_time = time.time()
-            sol = simulated_annealing(s_0, prob, three_exchange)
+            sol = simulated_annealing(s_0, prob, operators)
 
             end_time = time.time()
             dur = end_time - start_time

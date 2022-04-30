@@ -226,6 +226,44 @@ def cost_function(Solution, problem):
     return TotalCost
 
 
+def veichle_cost_function(Solution, problem, vehicle):
+    """
+
+    :param Solution: the proposed solution for the order of calls in each vehicle
+    :param problem:
+    :return:
+    """
+
+    num_vehicles = problem["n_vehicles"]
+    Cargo = problem["Cargo"]
+    TravelCost = problem["TravelCost"]
+    FirstTravelCost = problem["FirstTravelCost"]
+    PortCost = problem["PortCost"]
+
+    Solution = np.append(Solution, [0])
+    ZeroIndex = np.array(np.where(Solution == 0)[0], dtype=int)
+    tempidx = 0
+
+    currentVPlan = Solution[tempidx : ZeroIndex[vehicle]]
+    currentVPlan = currentVPlan - 1
+    NoDoubleCallOnVehicle = len(currentVPlan)
+    tempidx = ZeroIndex[vehicle] + 1
+
+    if NoDoubleCallOnVehicle > 0:
+        sortRout = np.sort(currentVPlan, kind="mergesort")
+        I = np.argsort(currentVPlan, kind="mergesort")
+        Indx = np.argsort(I, kind="mergesort")
+
+        PortIndex = Cargo[sortRout, 1].astype(int)
+        PortIndex[::2] = Cargo[sortRout[::2], 0]
+        PortIndex = PortIndex[Indx] - 1
+
+        Diag = TravelCost[vehicle, PortIndex[:-1], PortIndex[1:]]
+
+        FirstVisitCost = FirstTravelCost[vehicle, int(Cargo[currentVPlan[0], 0] - 1)]
+        return np.sum(np.hstack((FirstVisitCost, Diag.flatten()))) + np.sum(PortCost[vehicle, currentVPlan]) / 2
+
+
 def generate_s_0(n_veichles, n_calls):
     ret = [0] * n_veichles
     calls = list(range(1, n_calls + 1))
