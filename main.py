@@ -1,5 +1,6 @@
-
-from pdp.simulated_annealing_V2 import main as simulated_annealing_V2
+from pdp.alns import main as alns
 
 def main():
-    simulated_annealing_V2()
+    alns()
+
+main()
